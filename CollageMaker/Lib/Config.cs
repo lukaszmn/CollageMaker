@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace ITLN.CollageMaker.Lib {
 
@@ -19,6 +14,11 @@ namespace ITLN.CollageMaker.Lib {
 		public int SplitterSize = 5;
 
 		public Color FontAndSplitterColor = Color.Red;
+
+
+		public CollageOrientation Orientation;
+
+		public ImageAlignment Alignment;
 
 
 		public int TotalMargin {

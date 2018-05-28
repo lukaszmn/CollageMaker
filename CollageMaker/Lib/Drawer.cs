@@ -78,7 +78,7 @@ namespace ITLN.CollageMaker.Lib {
 						x = index * config.TotalMargin + items.Take(index).Sum(i => i.Image.Width);
 
 					y = 0;
-					loc.Image = new Point(x, y + captionHeight);
+					loc.Image = new Point(x, getAlignmentPosition(y + captionHeight, canvasSize.Height, height));
 					loc.Caption = new Rectangle(x, y, width, captionHeight);
 
 					if (index > 0) {
@@ -96,7 +96,7 @@ namespace ITLN.CollageMaker.Lib {
 						y = index * (config.TotalMargin + captionHeight) + items.Take(index).Sum(i => i.Image.Height);
 
 					x = 0;
-					loc.Image = new Point(x, y + captionHeight);
+					loc.Image = new Point(getAlignmentPosition(x, canvasSize.Width, width), y + captionHeight);
 					loc.Caption = new Rectangle(x, y, width, captionHeight);
 
 					if (index > 0) {
@@ -112,6 +112,24 @@ namespace ITLN.CollageMaker.Lib {
 			return loc;
 		}
 
+
+		private int getAlignmentPosition(int start, int end, int size) {
+			switch (config.Alignment) {
+
+				case ImageAlignment.Start:
+					return start;
+
+				case ImageAlignment.Middle:
+					int margin = (end - start - size) / 2;
+					return start + margin;
+
+				case ImageAlignment.End:
+					return end - size;
+
+				default:
+					throw new ArgumentException();
+			}
+		}
 
 	}
 

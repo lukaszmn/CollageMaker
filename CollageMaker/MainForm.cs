@@ -2,14 +2,9 @@
 using ITLN.Utils.Disk;
 using ITLN.Utils.Win.ListEditor;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ITLN.CollageMaker {
@@ -20,11 +15,17 @@ namespace ITLN.CollageMaker {
 
 		private ListEditorHelper<Item> editor;
 
+		private Config config;
+
 
 		public MainForm() {
 			InitializeComponent();
 
-			setup();
+			config = new Config();
+			controller = new Controller();
+
+			setupUI();
+			showConfigInUI();
 
 			// TODO: drag & drop
 			// TODO: reorder items
@@ -32,8 +33,14 @@ namespace ITLN.CollageMaker {
 		}
 
 
-		private void setup() {
+		private void setupUI() {
 			uOpenDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+			uPicture.Image = new Bitmap(1, 1);
+
+			editor = new ListEditorHelper<Item>(uList, null, uAdd, null, null, controller.Items);
+			editor.DisplayItem += (s, item) => new[] { getName(item.Item) };
+			editor.ConfirmOnDelete = DeleteConfirmation.Never;
 
 			uOrientation.Items.AddRange(
 				Enum.GetValues(typeof(CollageOrientation))
@@ -42,13 +49,26 @@ namespace ITLN.CollageMaker {
 			);
 			uOrientation.SelectedIndex = 0;
 
-			uPicture.Image = new Bitmap(1, 1);
+			uAlignment.Items.AddRange(
+				Enum.GetValues(typeof(ImageAlignment))
+				.Cast<ImageAlignment>()
+				.ToArray()
+			);
+			uAlignment.SelectedIndex = 0;
+		}
 
-			controller = new Controller();
 
-			editor = new ListEditorHelper<Item>(uList, null, uAdd, null, null, controller.Items);
-			editor.DisplayItem += (s, item) => new[] { getName(item.Item) };
-			editor.ConfirmOnDelete = DeleteConfirmation.Never;
+		private void showConfigInUI() {
+			uOrientation.SelectedItem = config.Orientation;
+			uAlignment.SelectedItem = config.Alignment;
+			uColorPanel.BackColor = config.FontAndSplitterColor;
+
+			if (config.SplitterSize == 0)
+				uSeparatorEnabled.Checked = false;
+			else {
+				uSeparatorEnabled.Checked = true;
+				uSeparatorSize.Value = config.SplitterSize;
+			}
 		}
 
 
@@ -88,11 +108,6 @@ namespace ITLN.CollageMaker {
 		}
 
 
-		private void uCaptions_TextChanged(object sender, EventArgs e) {
-			redraw();
-		}
-
-
 		private bool storeCaptions() {
 			int linesCount = uCaptions.Lines.Length;
 
@@ -115,15 +130,25 @@ namespace ITLN.CollageMaker {
 			if (uOrientation.SelectedIndex < 0)
 				return;
 
+			setOptions();
 			bool hasCaptions = storeCaptions();
-			var orient = (CollageOrientation) uOrientation.SelectedItem;
-			uPicture.Image = controller.Redraw(orient, uPicture.Image, hasCaptions);
+			uPicture.Image = controller.Redraw(config, uPicture.Image, hasCaptions);
 		}
 
 
-		private void uOrientation_SelectedItemChanged(object sender, EventArgs e) {
-			redraw();
+		private void setOptions() {
+			var orient = (CollageOrientation)uOrientation.SelectedItem;
+			config.Orientation = orient;
+
+			var alignment = (ImageAlignment)uAlignment.SelectedItem;
+			config.Alignment = alignment;
+
+			if (!uSeparatorEnabled.Checked)
+				config.SplitterSize = 0;
+			else
+				config.SplitterSize = (int) uSeparatorSize.Value;
 		}
+
 
 		private void uSave_Click(object sender, EventArgs e) {
 			controller.SaveResult();
@@ -140,6 +165,28 @@ namespace ITLN.CollageMaker {
 				editor.Refresh();
 				redraw();
 			}
+		}
+
+
+		private void uiForConfigChanged(object sender, EventArgs e) {
+			redraw();
+		}
+
+
+		private void uColorPanel_Click(object sender, EventArgs e) {
+			uColorDialog.Color = config.FontAndSplitterColor;
+			if (uColorDialog.ShowDialog() == DialogResult.OK) {
+				config.FontAndSplitterColor = uColorDialog.Color;
+				uColorPanel.BackColor = uColorDialog.Color;
+				redraw();
+			}
+		}
+
+
+		private void uSeparatorEnabled_CheckedChanged(object sender, EventArgs e) {
+			uSeparatorSize.Enabled = uSeparatorEnabled.Checked;
+			uSeparatorLabel.Enabled = uSeparatorEnabled.Checked;
+			redraw();
 		}
 
 	}

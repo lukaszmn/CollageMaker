@@ -12,8 +12,6 @@ namespace ITLN.CollageMaker.Lib {
 
 		public List<Item> Items = new List<Item>();
 
-		public Config Config = new Config();
-
 
 		private static int counter = 1;
 
@@ -38,13 +36,13 @@ namespace ITLN.CollageMaker.Lib {
 		}
 
 
-		public Image Redraw(CollageOrientation orientation, Image image, bool hasCaptions) {
-			Drawer drawer = new Drawer(Items, Config, orientation);
+		public Image Redraw(Config config, Image image, bool hasCaptions) {
+			Drawer drawer = new Drawer(Items, config, config.Orientation);
 			Size size = drawer.GetSize(hasCaptions);
 			var bmp = new Bitmap(image, size);
 
-			using (var font = new Font("Arial", Config.CaptionSize))
-			using (var brush = new SolidBrush(Config.FontAndSplitterColor))
+			using (var font = new Font("Arial", config.CaptionSize))
+			using (var brush = new SolidBrush(config.FontAndSplitterColor))
 			using (var sf = new StringFormat())
 			using (Graphics g = Graphics.FromImage(bmp)) {
 
