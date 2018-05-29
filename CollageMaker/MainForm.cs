@@ -47,18 +47,20 @@ namespace ITLN.CollageMaker {
 				.Cast<CollageOrientation>()
 				.ToArray()
 			);
-			uOrientation.SelectedIndex = 0;
 
 			uAlignment.Items.AddRange(
 				Enum.GetValues(typeof(ImageAlignment))
 				.Cast<ImageAlignment>()
 				.ToArray()
 			);
-			uAlignment.SelectedIndex = 0;
 		}
 
 
+		private bool ignoreEvents;
+
 		private void showConfigInUI() {
+			ignoreEvents = true;
+
 			uOrientation.SelectedItem = config.Orientation;
 			uAlignment.SelectedItem = config.Alignment;
 			uColorPanel.BackColor = config.FontAndSplitterColor;
@@ -69,6 +71,8 @@ namespace ITLN.CollageMaker {
 				uSeparatorEnabled.Checked = true;
 				uSeparatorSize.Value = config.SplitterSize;
 			}
+
+			ignoreEvents = false;
 		}
 
 
@@ -127,7 +131,7 @@ namespace ITLN.CollageMaker {
 
 
 		private void redraw() {
-			if (uOrientation.SelectedIndex < 0)
+			if (ignoreEvents || uOrientation.SelectedIndex < 0)
 				return;
 
 			setOptions();
