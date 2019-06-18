@@ -67,9 +67,8 @@ namespace ITLN.CollageMaker.Lib {
 			return bmp;
 		}
 
-		public void SaveResult() {
-			// TODO
-
+		public void SaveResult(Image image, string path) {
+			image.Save(path);
 		}
 
 

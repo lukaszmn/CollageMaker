@@ -155,8 +155,16 @@ namespace ITLN.CollageMaker {
 
 
 		private void uSave_Click(object sender, EventArgs e) {
-			controller.SaveResult();
+			if (uSaveDialog.ShowDialog() == DialogResult.OK) {
+
+				try {
+					controller.SaveResult(uPicture.Image, uSaveDialog.FileName);
+				} catch (Exception ex) {
+					MessageBox.Show(ex.Message);
+				}
+			}
 		}
+
 
 		private void uCopy_Click(object sender, EventArgs e) {
 			controller.CopyResult(uPicture.Image);

@@ -42,6 +42,7 @@
 			this.uColorDialog = new System.Windows.Forms.ColorDialog();
 			this.label4 = new System.Windows.Forms.Label();
 			this.uAlignment = new System.Windows.Forms.DomainUpDown();
+			this.uSaveDialog = new System.Windows.Forms.SaveFileDialog();
 			((System.ComponentModel.ISupportInitialize)(this.uPicture)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.uSeparatorSize)).BeginInit();
 			this.SuspendLayout();
@@ -218,6 +219,12 @@
 			this.uAlignment.Text = "Horizontal";
 			this.uAlignment.SelectedItemChanged += new System.EventHandler(this.uiForConfigChanged);
 			// 
+			// uSaveDialog
+			// 
+			this.uSaveDialog.DefaultExt = "png";
+			this.uSaveDialog.Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp;*.gif";
+			this.uSaveDialog.RestoreDirectory = true;
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -272,6 +279,7 @@
 		private System.Windows.Forms.ColorDialog uColorDialog;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.DomainUpDown uAlignment;
+		private System.Windows.Forms.SaveFileDialog uSaveDialog;
 	}
 }
 
